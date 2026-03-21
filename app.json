@@ -34,13 +34,15 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "extra": {
-      "eas": {
-        "projectId": "11bf00fa-9be4-4937-8f5e-d2d8815959d7"
-      }
-    },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "f4b0f7f8-9b17-486f-95bf-1d21528b7c57"
+      }
+    },
+    "owner": "nomadapp"
   }
 }
