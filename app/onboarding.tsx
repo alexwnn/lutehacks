@@ -6,15 +6,15 @@ import { View, Text, TextInput } from "react-native";
 
 export default function Onboarding() {
     const [name, setName] = useState('');
-    const [height, setHeight] = useState('');
+    const [feet, setFeet] = useState('');
+    const [inches, setInches] = useState('');
     const [weight, setWeight] = useState('');
     const [age, setAge] = useState('');
 
     const handleSubmit = () => {
         storeData(name, 'name');
-        storeData(height, 'height');
+        storeData((parseInt(feet) * 12 + parseInt(inches)).toString(), 'height');
         storeData(weight, 'weight');
-        storeData(age, 'age');
         router.replace('/');
     }
     const storeData = async (value: string, key: string) => {
@@ -33,13 +33,22 @@ export default function Onboarding() {
             value={name}
             inputMode="text"
             />
-            <TextInput
-            style={styles.inputs}
-            onChangeText={setHeight}
-            placeholder="Enter Height"
-            value={height}
-            inputMode="numeric"
-            />
+            <View style={styles.row}>
+                <TextInput
+                style={styles.inputs}
+                onChangeText={setFeet}
+                placeholder="Feet"
+                value={feet}
+                inputMode="numeric"
+                />
+                <TextInput
+                style={styles.inputs}
+                onChangeText={setInches}
+                placeholder="Inches"
+                value={inches}
+                inputMode="numeric"
+                />
+            </View>
             <TextInput
             style={styles.inputs}
             onChangeText={setWeight}
@@ -47,14 +56,7 @@ export default function Onboarding() {
             value={weight}
             inputMode="numeric"
             />
-            <TextInput
-            style={styles.inputs}
-            onChangeText={setAge}
-            placeholder="Enter Age"
-            value={age}
-            inputMode="numeric"
-            />
-            <Button title="Submit" onPress={handleSubmit} />
+            <Button title="Submit" onPress={handleSubmit} /> 
         </View>
     );
 }
@@ -65,7 +67,10 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'gray',
         padding: 10,
-        margin: 10,
+        marginTop: 10,
+        marginBottom: 10,
+        marginLeft: 2.5,
+        marginRight: 2.5,
         borderRadius: 5,
     },
     container: {
@@ -73,5 +78,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 5,
     }
 });
