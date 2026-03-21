@@ -1,6 +1,10 @@
 {
   "expo": {
     "name": "Nomad",
+    "scheme": "nomad",
+    "experiments": {
+      "typedRoutes": true
+    },
     "slug": "Nomad",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -34,6 +38,9 @@
       "eas": {
         "projectId": "11bf00fa-9be4-4937-8f5e-d2d8815959d7"
       }
-    }
+    },
+    "plugins": [
+      "expo-router"
+    ]
   }
 }
