@@ -1,22 +1,46 @@
 import { Stack, useRouter } from "expo-router";
 import { useEffect } from "react";
+import { UserProvider, useUser } from "../contexts/UserContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function RootLayout() {
-    const router = useRouter();
+  return (
+    <UserProvider>
+      <RootNavigator />
+    </UserProvider>
+  );
+}
 
-    const hasOnboarded = false;
+function RootNavigator() {
+  const router = useRouter();
+  const { setUser } = useUser();
 
-    useEffect(() => {
-        if (!hasOnboarded) {
-            router.replace('/onboarding')
-        }
-    }, [hasOnboarded]);
+  useEffect(() => {
+    const checkIfOnboarded = async () => {
+      const name = await AsyncStorage.getItem("name");
+      if (name == null) {
+        router.replace("/onboarding");
+      } else {
+        const height = await AsyncStorage.getItem("height");
+        const weight = await AsyncStorage.getItem("weight");
+        const goal = await AsyncStorage.getItem("goal");
 
-    return (
-        <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-            <Stack.Screen name="profile" />
-        </Stack>
-    );
+        setUser({
+          name,
+          height: Number(height),
+          weight: Number(weight),
+          stepsGoal: Number(goal),
+        });
+      }
+    };
+    checkIfOnboarded();
+  }, []);
+
+  return (
+    <Stack>
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+      <Stack.Screen name="profile" />
+    </Stack>
+  );
 }

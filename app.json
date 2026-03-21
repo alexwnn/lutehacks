@@ -19,7 +19,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.ggez.Nomad",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSMotionUsageDescription": "We use motion data to track your steps."
       }
     },
     "android": {
@@ -35,7 +36,13 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-sensors",
+        {
+          "motionPermission": "Allow $(PRODUCT_NAME) to access your device motion"
+        }
+      ]
     ],
     "extra": {
       "router": {},
