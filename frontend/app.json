@@ -42,6 +42,12 @@
         {
           "motionPermission": "Allow $(PRODUCT_NAME) to access your device motion"
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+        }
       ]
     ],
     "extra": {
