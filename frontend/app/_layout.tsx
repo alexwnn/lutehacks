@@ -1,5 +1,5 @@
 import { Stack, useRouter } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { UserProvider, useUser } from "../contexts/UserContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -14,6 +14,7 @@ export default function RootLayout() {
 function RootNavigator() {
   const router = useRouter();
   const { setUser } = useUser();
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const checkIfOnboarded = async () => {
@@ -23,22 +24,23 @@ function RootNavigator() {
       } else {
         const height = await AsyncStorage.getItem("height");
         const goal = await AsyncStorage.getItem("goal");
-
         setUser({
           name,
           height: Number(height),
           stepsGoal: Number(goal),
         });
       }
+      setReady(true);
     };
     checkIfOnboarded();
   }, []);
+
+  if (!ready) return null;
 
   return (
     <Stack>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-      <Stack.Screen name="profile" />
     </Stack>
   );
 }

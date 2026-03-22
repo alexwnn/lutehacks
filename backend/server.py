@@ -9,6 +9,8 @@ api_key = os.getenv("GOOGLE_MAPS_API_KEY")
 api_url = "https://places.googleapis.com/v1/places:searchNearby"
 
 METERS_PER_MILE = 1609.344
+MIN_DISTANCE_MILES = 0.15
+MAX_RESULTS = 20
 
 app = Flask(__name__)
 
@@ -24,18 +26,45 @@ def get_places(lat, lng):
         "X-Goog-FieldMask": "places.displayName,places.formattedAddress,places.location",
     }
     payload = {
-        "includedTypes": ["restaurant"],
-        "maxResultCount": 10,
+        "includedTypes": [
+            # Campus & landmarks
+            "university",
+            "library",
+            "museum",
+            "art_gallery",
+            "performing_arts_theater",
+            "stadium",
+            "cultural_landmark",
+            "historical_landmark",
+            "monument",
+            "visitor_center",
+            "community_center",
+            "park",
+            "botanical_garden",
+            "plaza",
+            # Campus facilities
+            "gym",
+            "fitness_center",
+            "swimming_pool",
+            "sports_complex",
+            # Food spots worth the walk
+            "restaurant",
+            "cafe",
+            "bakery",
+            "coffee_shop",
+        ],
+        "maxResultCount": 20,
         "locationRestriction": {
             "circle": {
                 "center": {
                     "latitude": lat_f,
                     "longitude": lng_f,
                 },
-                "radius": 1610.0,  # 1 mile
+                "radius": 2414.0,  # 3 miles
             }
         },
     }
+
     places_resp = requests.post(api_url, headers=headers, json=payload)
     places_data = places_resp.json()
     places = places_data.get("places") or []
@@ -73,33 +102,29 @@ def get_places(lat, lng):
         plng = loc.get("longitude")
 
         if el.get("status") != "OK":
-            ret.append(
-                {
-                    "name": name,
-                    "latitude": plat,
-                    "longitude": plng,
-                    "distanceMiles": None,
-                    "durationText": None,
-                    "durationSeconds": None,
-                    "error": el.get("status"),
-                }
-            )
             continue
 
         dist_m = el["distance"]["value"]
         dur_s = el["duration"]["value"]
+        dist_miles = round(dist_m / METERS_PER_MILE, 2)
+
+        if dist_miles < MIN_DISTANCE_MILES:
+            continue
 
         ret.append(
             {
                 "name": name,
                 "latitude": plat,
                 "longitude": plng,
-                "distanceMiles": round(dist_m / METERS_PER_MILE, 2),
+                "distanceMiles": dist_miles,
                 "durationText": el["duration"]["text"],
                 "durationSeconds": dur_s,
             }
         )
-    print(ret)
+
+    ret.sort(key=lambda p: p["distanceMiles"])
+    ret = ret[:MAX_RESULTS]
+
     return jsonify(ret)
 
 
