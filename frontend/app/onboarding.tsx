@@ -63,6 +63,7 @@ export default function Onboarding() {
   const heightScrolled = useRef(false);
 
   const handleSubmit = () => {
+    if (!isStepValid(3)) return;
     storeData(name, "name");
     storeData((parseInt(feet) * 12 + parseInt(inches)).toString(), "height");
     storeData(goal, "goal");
@@ -148,7 +149,31 @@ export default function Onboarding() {
       ? `${feet} ft ${inches} in`
       : "-- ft -- in";
 
+  const isStepValid = (currentStep: number) => {
+    if (currentStep === 1) {
+      return name.trim().length > 0;
+    }
+
+    if (currentStep === 2) {
+      const f = parseInt(feet, 10);
+      const i = parseInt(inches, 10);
+      if (!Number.isFinite(f) || !Number.isFinite(i)) return false;
+      if (f < 4 || f > 8) return false;
+      if (i < 0 || i > 11) return false;
+      const total = f * 12 + i;
+      return total >= HEIGHT_MIN_IN && total <= HEIGHT_MAX_IN;
+    }
+
+    if (currentStep === 3) {
+      const g = parseInt(goal, 10);
+      return Number.isFinite(g) && g > 0;
+    }
+
+    return false;
+  };
+
   const onNext = () => {
+    if (!isStepValid(step)) return;
     if (step >= 3) return;
     setStep(step + 1);
   };
@@ -641,6 +666,7 @@ export default function Onboarding() {
 
       <Pressable
         onPress={step === 3 ? handleSubmit : onNext}
+        disabled={!isStepValid(step)}
         style={{
           marginHorizontal: 24,
           marginBottom: 40,
@@ -648,6 +674,7 @@ export default function Onboarding() {
           borderRadius: 50,
           paddingVertical: 18,
           alignItems: "center",
+          opacity: isStepValid(step) ? 1 : 0.5,
         }}
       >
         <Text style={{ color: "#FFFFFF", fontSize: 16, fontWeight: "600" }}>
