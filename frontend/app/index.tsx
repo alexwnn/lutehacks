@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Button } from "react-native";
 import { Pedometer } from "expo-sensors";
 import * as Location from "expo-location";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useUser } from "../contexts/UserContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 
 export default function Index() {
   const [isPedometerAvailable, setIsPedometerAvailable] = useState("checking");
@@ -10,6 +14,8 @@ export default function Index() {
   const [location, setLocation] = useState<Location.LocationObject | null>(
     null,
   );
+  const { user } = useUser();
+  const router = useRouter();
 
   const subscribe = async () => {
     const isAvailable = await Pedometer.isAvailableAsync();
@@ -29,6 +35,16 @@ export default function Index() {
         setCurrentStepCount(result.steps);
       });
     }
+  };
+
+  const deleteUserInfo = () => {
+    AsyncStorage.clear()
+      .then(() => {
+        router.replace("/onboarding");
+      })
+      .catch((error) => {
+        console.error("Failed to clear user info", error);
+      });
   };
   useEffect(() => {
     async function getCurrentLocationAndGetPlaces() {
@@ -56,19 +72,48 @@ export default function Index() {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Text>Pedometer.isAvailableAsync(): {isPedometerAvailable}</Text>
-      <Text>Steps taken in the last 24 hours: {pastStepCount}</Text>
-      <Text>Walk! And watch this go up: {currentStepCount}</Text>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.topSection}>
+        <Text>Hi {user?.name}</Text>
+        <Button title="Delete Stuff" onPress={deleteUserInfo} />
+      </View>
+      <View style={styles.numContainer}>
+        <Text style={styles.stepsTaken}>
+          {pastStepCount + currentStepCount}/
+        </Text>
+        <Text style={styles.goal}>{user?.stepsGoal}</Text>
+      </View>
+      <View style={styles.listContainer}>
+        <Text>This is the bottom section container</Text>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 15,
-    alignItems: "center",
+    backgroundColor: "red",
+  },
+  topSection: {
+    backgroundColor: "white",
+  },
+  numContainer: {
+    flexDirection: "row",
+    alignItems: "flex-end",
     justifyContent: "center",
+    backgroundColor: "white",
+    height: "30%",
+  },
+  stepsTaken: {
+    fontSize: 40,
+  },
+  goal: {
+    fontSize: 20,
+  },
+  listContainer: {
+    backgroundColor: "white",
+    height: "40%",
+    marginTop: "auto",
   },
 });
