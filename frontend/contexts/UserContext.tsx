@@ -3,7 +3,6 @@ import { createContext, ReactNode, useContext, useState } from "react";
 export interface User {
   name: string;
   height: number;
-  weight: number;
   stepsGoal: number;
 }
 

@@ -22,13 +22,11 @@ function RootNavigator() {
         router.replace("/onboarding");
       } else {
         const height = await AsyncStorage.getItem("height");
-        const weight = await AsyncStorage.getItem("weight");
         const goal = await AsyncStorage.getItem("goal");
 
         setUser({
           name,
           height: Number(height),
-          weight: Number(weight),
           stepsGoal: Number(goal),
         });
       }
