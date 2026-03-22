@@ -1,5 +1,8 @@
 # Nomad
 
+<img width="1920" height="1440" alt="app" src="https://github.com/user-attachments/assets/53155a55-8156-441c-9d5d-ac1fc5ff0c64" />
+
+
 **Turn your daily steps into a mission.**
 
 Nomad is a mobile app that tracks your steps in real time and recommends nearby places worth walking to — showing exactly how many steps you'll earn, how far it is, and how long it'll take. Tap a destination to get walking directions in Apple Maps or Google Maps.
